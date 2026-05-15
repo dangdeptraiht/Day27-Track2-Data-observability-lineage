@@ -55,7 +55,7 @@ def build_summary(rows: list[dict[str, str]]) -> dict[str, int | str]:
 def write_summary(summary: dict[str, int | str], output_path: str | Path) -> Path:
     output_file = Path(output_path)
     output_file.parent.mkdir(parents=True, exist_ok=True)
-    output_file.write_text(json.dumps(summary, indent=2), encoding="utf-8")
+    output_file.write_text(f"{json.dumps(summary, indent=2)}\n", encoding="utf-8")
     return output_file
 
 
@@ -74,7 +74,10 @@ def send_discord_message(summary: dict[str, int | str], webhook_url: str = DISCO
     http_request = request.Request(
         webhook_url,
         data=payload,
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "User-Agent": "sales-data-quality-lab/1.0",
+        },
         method="POST",
     )
     with request.urlopen(http_request, timeout=15) as response:
